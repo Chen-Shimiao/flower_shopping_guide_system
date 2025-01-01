@@ -1,0 +1,135 @@
+{% load static %} {% load section_path %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <meta name="description" content="This website is online flower shop, called Flowery Days." />
+        <meta name="author" content="Asuna Masuda" />
+        {% block extra_meta %} {% endblock %}
+
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="{% static 'img/favicon/favicon.ico' %}" type="image/x-icon" />
+
+        <!-- Bootstrap, Fonts & CSS -->
+        {% block corecss %}
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Roboto&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+        <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+        <link href="/static/css/style.css" rel="stylesheet">
+        <link href="/static/css/style-responsive.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+        {% endblock %} {% block extra_css %} {% endblock %}
+
+        <!-- JavaScript -->
+        {% block corejs %}
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/04cda1f084.js" crossorigin="anonymous"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+        <!-- Stripe -->
+        <script src="https://js.stripe.com/v3/"></script>
+        <script src="{% static 'js/base.js' %}"></script>
+        {% endblock %} {% block extra_js %} {% endblock %}
+
+        <title>Flowery Days {% block extra_title %}{% endblock %}</title>
+    </head>
+
+    <body>
+        <!-- Navbar -->
+        <header class="header-ex bg-white">
+            {% block page_header %} {% endblock %}
+            <nav id="navber-extension" class="navbar navbar-expand-lg d-block d-lg-flex navbar-light fixed-top bg-white navber-spacing">
+                <div class="d-flex justify-content-between">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <!--Logo-->
+                    <a href="{% url 'home' %}">
+                        <img id="brand-logo" src="{% static 'img/home/logo_flowery_days.png' %}" alt="logo" />
+                    </a>
+                    <!--Search button for smaller than medium screen-->
+                    <button class="btn btn-colour-1 d-block d-lg-none mr-2" id="search-button" aria-label="Product Search Button">
+                        <span class="text-center">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </button>
+                </div>
+
+                <div class="collapse navbar-collapse my-auto" id="navbarResponsive">
+                    <ul class="navbar-nav">
+                        {% if request.user.is_authenticated %}
+                        <li class="nav-item mr-1">
+                            <a class="nav-link" href="{% url 'home' %}">首页</a>
+                        </li>
+                        <li class="nav-item mr-1">
+                            <a class="nav-link text-nowrap" href="{% url 'upcoming_holiday_recommendations' %}">节日优选</a>
+                        </li>
+                        <li class="nav-item mr-1">
+                            <a class="nav-link text-nowrap" href="{% url 'purpose_list' %}">功能速选</a>
+                        </li>
+                        <li class="nav-item mr-1">
+                            <a class="nav-link text-nowrap" href="{% url 'normalized_products' %}">随意挑选</a>
+                        </li>
+                        <li class="nav-item mr-1">
+                            <a class="nav-link" href="{% url 'contact' %}">联系我们</a>
+                        </li>
+                        {% endif %}
+<!--                        <li class="navbar-divider d-lg-none d-block"></li>-->
+<!--                        {% if request.user.is_authenticated %}-->
+<!--                                <li class="nav-item mr-1 d-lg-none d-block">-->
+<!--                                    <a class="nav-link" href="">个人中心</a>-->
+<!--                                </li>-->
+<!--                                <li class="nav-item mr-1 d-lg-none d-block">-->
+<!--                                    <a class="nav-link" href="">退出登录</a>-->
+<!--                                </li>-->
+<!--                            {% else %}-->
+<!--                                <li class="nav-item mr-1">-->
+<!--                                    <a class="nav-link" href="">登录</a>-->
+<!--                                </li>-->
+<!--                                <li class="nav-item mr-1">-->
+<!--                                    <a class="nav-link" href="">注册</a>-->
+<!--                                </li>-->
+<!--                        {% endif %}-->
+                    </ul>
+                </div>
+
+                {% if user.is_authenticated %}
+                    <div class="dropdown dropdown-extension d-none d-lg-block">
+                        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Account Toggle">
+                            <span><i class="fas fa-user-circle"></i></span><span>{{request.user}}</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-extension" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="{% url 'personal_details' %}">个人中心</a>
+                            <a href="{% url 'user_logout' %}" class="dropdown-item">退出登录</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </nav>
+        </header>
+        {% block content %} {% endblock %}
+
+        <!-- Footer -->
+        <footer class="footer-all">
+            <div class="second-footer-panel">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <p><span class="mr-3">© 20210250010 范舒意</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        {% block postloadjs %}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        {% endblock %}
+    </body>
+</html>

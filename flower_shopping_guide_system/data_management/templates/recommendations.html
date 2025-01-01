@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_header %}
+<style>
+    .holiday_name{
+    writing-mode:vertical-rl;
+    position:fixed;
+    right:20px;
+    background-color:white
+    }
+    .holiday_description{
+    writing-mode:vertical-rl;
+    position:fixed;
+    right:0;
+    background-color:white
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="section-top">
+    {% if recommendations %}
+    {% for rec in recommendations %}
+    <div>
+        <h2 class="holiday_name">{{ rec.holiday.name }} - {{ rec.holiday.date }}</h2>
+        <p class="holiday_description">{{ rec.holiday.description }}</p>
+        <div>
+            <ul>
+                {% for category in rec.categories %}
+                <li style="font-size:50pt; right:200px; position:fixed"><a href="{% url 'category_detail' category_id=category.id %}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+
+    {% endfor %}
+    {% else %}
+    <p>当前没有即将到来的节日。</p>
+    {% endif %}
+</div>
+<script type="text/javascript" src="/static/lib/jquery.backstretch.min.js"></script>
+<script>
+    $.backstretch("/static/img/home/login-bg.jpg", {
+      speed: 500
+    });
+</script>
+{% endblock %}

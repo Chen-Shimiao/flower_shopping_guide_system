@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_header %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    .container {
+        width: 90%;
+        margin: 0 auto;
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        grid-template-rows: repeat(auto-fill, minmax(150px, 600px));
+    }
+    .card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        height:100%;
+        opacity: 0.7
+    }
+    .card:hover {
+        transform: scale(1.05);
+    }
+    .card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    .card-body {
+        padding: 15px;
+    }
+    .card-title {
+        font-size: 1.2em;
+        margin: 0 0 10px;
+        color: #333;
+    }
+    .card-text {
+        font-size: 0.9em;
+        color: #555;
+        margin-bottom: 15px;
+    }
+    .price {
+        font-size: 1.1em;
+        color: #007BFF;
+        font-weight: bold;
+    }
+    .button {
+        display: inline-block;
+        padding: 10px 15px;
+        background-color: #007BFF;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 0.9em;
+        text-align: center;
+    }
+    .button:hover {
+        background-color: #0056b3;
+    }
+.purpose-name {
+writing-mode: vertical-rl; /* 设置文字竖排，从右到左 */
+text-align: center; /* 使文字居中 */
+font-size: 50px; /* 设置字体大小 */
+margin: 200px 60px
+}
+
+</style>
+
+<div class="container header-container">
+    <div class="row">
+        <div class="col"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="">
+    <br>
+    <div class="grid">
+        {% for purpose in purposes %}
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title purpose-name"><a href="{% url 'normalized_products_by_purposes' purpose.id %}"
+                                                       target="_blank" class="text-decoration-none">{{ purpose.name }}</a></h1>
+
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<script type="text/javascript" src="/static/lib/jquery.backstretch.min.js"></script>
+<script>
+    $.backstretch("/static/img/home/login-bg.jpg", {
+      speed: 500
+    });
+</script>
+{% endblock %}
