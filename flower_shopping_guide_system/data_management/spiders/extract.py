@@ -22,6 +22,22 @@ def extract_title(title):
 
     return extracted_info
 
+def convert_to_number(text):
+    # 处理万单位
+    if '万' in text:
+        # 使用正则提取数字部分
+        match = re.match(r'(\d+)', text)
+        if match:
+            number = int(match.group(1))  # 提取数字部分
+            return f"{number * 10000:.2f}"  # 转换为万的数字并保留两位小数
+
+    # 如果没有“万”，直接提取数字
+    match = re.match(r'(\d+)', text)
+    if match:
+        number = int(match.group(1))  # 提取数字部分
+        return f"{number:.2f}"  # 保留两位小数
+
+    return "0.00"  # 默认返回 "0.00" 如果没有找到数字
 
 # 提取信息
 def extract_info():
@@ -29,9 +45,10 @@ def extract_info():
     flowers=RawProducts.objects.all()
     for f in flowers:
         post_free=f.postText=="包邮"
+        deal = convert_to_number(f.deal)
         data_source=DataSource.objects.get(name="淘宝")
         shop,created=Shop.objects.update_or_create(name = f.shop ,website_url = f.shop_url,location =f.location )
-        flower, created=NormalizedProduct.objects.update_or_create(source=data_source,name=f.title, price=f.price, post_free=post_free,image_url=f.img_url.replace("_.webp", ""),detail_url=f.title_url,shop=shop)
+        flower, created=NormalizedProduct.objects.update_or_create(source=data_source,name=f.title, price=f.price,deal=deal, post_free=post_free,image_url=f.img_url.replace("_.webp", ""),detail_url=f.title_url,shop=shop)
         info=(extract_title(f.title))
         for i in info["flowers"]:
             flower.category.add(Category.objects.get(name=i))

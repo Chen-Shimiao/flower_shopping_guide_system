@@ -11,6 +11,8 @@ urlpatterns = [
     path('purpose_list', views.purpose_list, name='purpose_list'),
     path('purpose/<int:purpose_id>', views.normalized_products_by_purposes, name='normalized_products_by_purposes'),
     path('search/', views.flower_search, name='flower_search'),
+    path('charts/', views.sales_dashboard, name='sales_dashboard'),
 ]
+
 
 

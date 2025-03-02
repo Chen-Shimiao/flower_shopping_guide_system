@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_header %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container section-top">
+
+    <div>
+        <div id="cat_chart"></div>
+    </div>
+<hr>
+    <div>
+        <div id="shop_chart"></div>
+    </div>
+<hr>
+    <div>
+        <div id="price_chart"></div>
+    </div>
+<hr>
+    <script>
+        var cat_chart = JSON.parse('{{ cat_chart|safe }}');
+        var shop_chart = JSON.parse('{{ shop_chart|safe }}');
+        var price_chart = JSON.parse('{{ price_chart|safe }}');
+
+        Plotly.newPlot('cat_chart', cat_chart.data, cat_chart.layout);
+        Plotly.newPlot('shop_chart', shop_chart.data, shop_chart.layout);
+        Plotly.newPlot('price_chart', price_chart.data, price_chart.layout);
+    </script>
+    <script type="text/javascript" src="/static/lib/jquery.backstretch.min.js"></script>
+    <script>
+    $.backstretch("/static/img/home/login-bg.jpg", {
+      speed: 500
+    });
+  </script>
+</div>
+{% endblock %}

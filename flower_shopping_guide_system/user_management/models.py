@@ -1,12 +1,12 @@
 import email
 
-from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 import re
 import bcrypt
 
 
-class CustomUserManager(models.Manager):
+class CustomUserManager(BaseUserManager):
     def reg_validator(self, postData):
         errors = {}
         phone_falg = UserProfile.objects.filter(email=postData['phone'])
@@ -26,6 +26,22 @@ class CustomUserManager(models.Manager):
             errors['user_created']= user_created
 
         return errors
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(email, password, **extra_fields)
+
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    # 添加get_by_natural_key方法
+    def get_by_natural_key(self, email):
+        return self.get(email=email)
 
 class UserProfile(AbstractBaseUser ):
     id = models.BigAutoField(primary_key=True)
@@ -37,10 +53,18 @@ class UserProfile(AbstractBaseUser ):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     last_login = models.DateTimeField(blank=True, null=True)
+    is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['email', 'phone']
     objects = CustomUserManager()
+
+    # 必须定义 has_module_perms 方法
+    def has_module_perms(self, app_label):
+        return True  # 简单实现，返回True表示用户有该模块的访问权限
+
+    def has_perm(self, perm, obj=None):
+        return True  # 简单实现，返回True表示用户有所有权限
 
 class ContactMessage(models.Model):
     name = models.CharField(max_length=100)  # 用户名

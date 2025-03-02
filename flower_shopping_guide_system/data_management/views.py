@@ -7,8 +7,13 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.template import loader
 
-from .models import NormalizedProduct, Category, FlowerPurpose
+from .models import NormalizedProduct, Category, FlowerPurpose,Announcement
 from .services import get_upcoming_holiday_categories
+from django.shortcuts import render
+from django.db.models import Sum
+import pandas as pd
+import plotly.express as px
+import plotly.io as pio
 
 def home_page(request):
         categories = Category.objects.prefetch_related('categories').all()  # 获取所有分类及其下的鲜花
@@ -27,7 +32,9 @@ def home_page(request):
                 'category': category,
                 'background_image_url': background_image_url
             })
-        return render(request, 'home.html', {'categories_with_images': categories_with_images})
+        announcements = Announcement.objects.filter(is_active=True).order_by('-created_at')[:5]  # 获取最新的5个公告
+
+        return render(request, 'home.html', {'announcements': announcements,'categories_with_images': categories_with_images})
 
 def upcoming_holiday_recommendations(request):
     """显示即将到来的节日及匹配分类"""
@@ -73,3 +80,89 @@ def flower_search(request):
 
     return render(request, 'normalized_products.html',
                   {'products': products, 'query': query, 'min_price': min_price, 'max_price': max_price})
+
+def sales_dashboard(request):
+    # **1. 统计销量最高的鲜花类别**
+    top_categories = (
+        NormalizedProduct.objects.values('category__name')
+        .annotate(total_sales=Sum('deal'))
+        .order_by('-total_sales')[:10]
+    )
+    cat_df = pd.DataFrame(top_categories)
+
+    # 生成条形图
+    fig1 = px.bar(cat_df, x="category__name", y="total_sales", title="销量最高的鲜花类别")
+    fig1.update_layout(
+        font=dict(
+            family="Microsoft YaHei, Arial, sans-serif",  # 使用支持中文的字体
+            size=14,
+            color="black"
+        ),
+        xaxis=dict(
+            title='鲜花类别',
+            tickfont=dict(family="Microsoft YaHei, Arial, sans-serif")
+        ),
+        yaxis=dict(
+            title='销量',
+            tickfont=dict(family="Microsoft YaHei, Arial, sans-serif")
+        )
+    )
+    cat_chart = pio.to_json(fig1)  # 转换为 JSON
+
+    # **2. 统计销量最高的店铺**
+    top_shops = (
+        NormalizedProduct.objects.values('shop__name')
+        .annotate(total_sales=Sum('deal'))
+        .order_by('-total_sales')[:10]
+    )
+    shop_df = pd.DataFrame(top_shops)
+
+    # 生成条形图
+    fig2 = px.bar(shop_df, x="shop__name", y="total_sales", title="销量最高的店铺")
+    fig2.update_layout(
+        font=dict(
+            family="Microsoft YaHei, Arial, sans-serif",  # 使用支持中文的字体
+            size=14,
+            color="black"
+        ),
+        xaxis=dict(
+            title='店铺名称',
+            tickfont=dict(family="Microsoft YaHei, Arial, sans-serif")
+        ),
+        yaxis=dict(
+            title='销量',
+            tickfont=dict(family="Microsoft YaHei, Arial, sans-serif")
+        )
+    )
+    shop_chart = pio.to_json(fig2)
+
+    # **3. 价格与销量的关系**
+    products = NormalizedProduct.objects.values('price', 'deal')
+    df = pd.DataFrame(products)
+
+    # # 处理销量数据（去除"100+"等非数值部分）
+    # df['deal'] = df['deal'].str.extract('(\d+)').astype(float)
+
+    # 生成散点图
+    fig3 = px.scatter(df, x="price", y="deal", title="价格与销量的关系", trendline="ols")
+    fig3.update_layout(
+        font=dict(
+            family="Microsoft YaHei, Arial, sans-serif",  # 使用支持中文的字体
+            size=14,
+            color="black"
+        ),
+        xaxis=dict(
+            title='价格（元）',
+            tickfont=dict(family="Microsoft YaHei, Arial, sans-serif")
+        ),
+        yaxis=dict(
+            title='销量',
+            tickfont=dict(family="Microsoft YaHei, Arial, sans-serif")
+        )
+    )
+    price_chart = pio.to_json(fig3)
+    return render(request, 'chart.html', {
+        'cat_chart': cat_chart,
+        'shop_chart': shop_chart,
+        'price_chart': price_chart,
+    })

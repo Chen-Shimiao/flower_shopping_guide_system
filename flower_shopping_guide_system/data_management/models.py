@@ -55,32 +55,32 @@ class CategoryHoliday(models.Model):
 
 class DataSource(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100, null=False)
-    url = models.URLField(max_length=255, null=False)
+    name = models.CharField(max_length=100, null=False,verbose_name="数据来源")
+    url = models.URLField(max_length=255, null=False,verbose_name="链接")
     STATUS_CHOICES = [
         ('active', 'Active'),
         ('inactive', 'Inactive'),
     ]
-    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default='active')
-    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default='active',verbose_name="是否有效")
+    created_at = models.DateTimeField(auto_now_add=True,verbose_name="创建时间")
 
     def __str__(self):
         return self.name
 
 class RawProducts(models.Model):
-        title = models.CharField(max_length=255)
-        price = models.DecimalField(max_digits=10, decimal_places=2)
-        deal = models.CharField(max_length=255, blank=True, null=True)
-        location = models.CharField(max_length=255)
-        shop = models.CharField(max_length=255)
-        postText = models.CharField(max_length=255, null=True)
-        title_url = models.URLField(max_length=3000)
-        shop_url = models.URLField(max_length=3000)
-        img_url = models.URLField(max_length=1000)
+        title = models.CharField(max_length=255,verbose_name="标题")
+        price = models.DecimalField(max_digits=10, decimal_places=2,verbose_name="价格")
+        deal = models.CharField(max_length=255, blank=True, null=True,verbose_name="销量")
+        location = models.CharField(max_length=255,verbose_name="地区")
+        shop = models.CharField(max_length=255,verbose_name="店铺")
+        postText = models.CharField(max_length=255, null=True,verbose_name="包邮")
+        title_url = models.URLField(max_length=3000,verbose_name="商品链接")
+        shop_url = models.URLField(max_length=3000,verbose_name="店铺链接")
+        img_url = models.URLField(max_length=1000,verbose_name="图片链接")
         style_1 = models.CharField(max_length=100, blank=True, null=True)
         style_2 = models.CharField(max_length=100, blank=True, null=True)
         style_3 = models.CharField(max_length=100, blank=True, null=True)
-        create_time = models.DateTimeField(auto_now_add=True)
+        create_time = models.DateTimeField(auto_now_add=True,verbose_name="创建时间")
 
         def __str__(self):
             return self.title
@@ -94,8 +94,8 @@ class Shop(models.Model):
         return self.name
 
 class FlowerPurpose(models.Model):
-    name = models.CharField(max_length=100)  # 用途名称
-    created_at = models.DateTimeField(auto_now_add=True)  # 创建时间
+    name = models.CharField(max_length=100, verbose_name="用途名称")  # 用途名称
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")  # 创建时间
 
     def __str__(self):
         return self.name
@@ -114,6 +114,7 @@ class NormalizedProduct(models.Model):
     source = models.ForeignKey('DataSource', on_delete=models.CASCADE, related_name='products')
     name = models.CharField(max_length=255, null=False)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    deal = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     post_free=models.BooleanField(default=0)
     image_url = models.URLField(max_length=255, blank=True, null=True)
     detail_url = models.URLField(max_length=255, null=False)
@@ -126,3 +127,16 @@ class NormalizedProduct(models.Model):
     def __str__(self):
         return self.name
 
+class Announcement(models.Model):
+    title = models.CharField(max_length=255, verbose_name='标题')
+    content = models.TextField(verbose_name='内容')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    is_active = models.BooleanField(default=True, verbose_name='是否显示')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = '公告'
+        verbose_name_plural = '公告'
+        ordering = ['-created_at']

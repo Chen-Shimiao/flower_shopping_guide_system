@@ -8,6 +8,7 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <meta name="description" content="This website is online flower shop, called Flowery Days." />
         <meta name="author" content="Asuna Masuda" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% block extra_meta %} {% endblock %}
 
         <!-- Favicon -->
@@ -37,6 +38,7 @@
         <!-- Stripe -->
         <script src="https://js.stripe.com/v3/"></script>
         <script src="{% static 'js/base.js' %}"></script>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         {% endblock %} {% block extra_js %} {% endblock %}
 
         <title>Flowery Days {% block extra_title %}{% endblock %}</title>
@@ -78,26 +80,22 @@
                         <li class="nav-item mr-1">
                             <a class="nav-link text-nowrap" href="{% url 'normalized_products' %}">随意挑选</a>
                         </li>
+                        {% if request.user.is_staff %}
+                        <li class="nav-item mr-1">
+                            <a class="nav-link" href="{% url 'sales_dashboard' %}">销售信息</a>
+                        </li>
+                        {% endif %}
                         <li class="nav-item mr-1">
                             <a class="nav-link" href="{% url 'contact' %}">联系我们</a>
                         </li>
+                        {% else %}
+                                <li class="nav-item mr-1">
+                                    <a class="nav-link" href="{% url 'user_login' %}">登录</a>
+                                </li>
+                                <li class="nav-item mr-1">
+                                    <a class="nav-link" href="{% url 'user_register' %}">注册</a>
+                                </li>
                         {% endif %}
-<!--                        <li class="navbar-divider d-lg-none d-block"></li>-->
-<!--                        {% if request.user.is_authenticated %}-->
-<!--                                <li class="nav-item mr-1 d-lg-none d-block">-->
-<!--                                    <a class="nav-link" href="">个人中心</a>-->
-<!--                                </li>-->
-<!--                                <li class="nav-item mr-1 d-lg-none d-block">-->
-<!--                                    <a class="nav-link" href="">退出登录</a>-->
-<!--                                </li>-->
-<!--                            {% else %}-->
-<!--                                <li class="nav-item mr-1">-->
-<!--                                    <a class="nav-link" href="">登录</a>-->
-<!--                                </li>-->
-<!--                                <li class="nav-item mr-1">-->
-<!--                                    <a class="nav-link" href="">注册</a>-->
-<!--                                </li>-->
-<!--                        {% endif %}-->
                     </ul>
                 </div>
 
